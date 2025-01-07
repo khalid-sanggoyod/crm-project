@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  api:
+    container_name: ${APP_NAME:-local}-api
+    image: ${APP_NAME:-local}-api:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${APP_PORT:-8000}:8000'
+      - '${APP_SSL_PORT:-443}:443'
+    volumes:
+      - .:/var/www/html
+      - ./ssl:/etc/nginx/ssl
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-laravel_db}
+      MYSQL_USER: ${DB_DATABASE:-laravel_usr}-usr
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - db
+      - adminer
+    networks:
+      - crm-network
+
+  db:
+    container_name: ${DB_DATABASE:-local}-db
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-laravel_db}
+      MYSQL_USER: ${DB_DATABASE:-laravel_usr}-usr
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - '${DB_PORT:-3306}:3306'
+    networks:
+      - crm-network
+
+  adminer:
+    container_name: ${APP_NAME:-local}-adminer
+    image: adminer
+    restart: always
+    ports:
+      - '8082:8080'
+    networks:
+      - crm-network
+
+volumes:
+  db_data:
+
+networks:
+  crm-network:
+    driver: bridge
