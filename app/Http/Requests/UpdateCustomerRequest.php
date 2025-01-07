@@ -22,10 +22,10 @@ class UpdateCustomerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => 'string|max:255',
-            'last_name' => 'string|max:255',
-            'email' => 'email' . $this->id,
-            'contact_number' => 'string|max:20',
+            'first_name' => ['string', 'nullable'],
+            'last_name' => ['string', 'nullable'],
+            'contact_number' => ['string', 'nullable'],
         ];
     }
+
 }
