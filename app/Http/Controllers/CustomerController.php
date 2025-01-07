@@ -5,75 +5,47 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Traits\ApiResponse;
 
 class CustomerController extends Controller
 {
+    use ApiResponse;
+
     public function create(StoreCustomerRequest $request)
     {
-        try {
-            $validated = $request->validated();
-            $customer = Customer::create($validated);
-            
-            return response()->json([
-                'status' => 'success',
-                'data' => $customer
-            ], 201);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to create customer: ' . $th->getMessage()
-            ], 500);
-        }
+        return $this->executeAction(
+            fn() => Customer::create($request->validated()),
+            'Failed to create customer'
+        );
     }
 
     public function index()
     {
-        try {
-            $customers = Customer::all();
-            return response()->json([
-                'status' => 'success',
-                'data' => $customers
-            ], 200);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to fetch customers: ' . $th->getMessage()
-            ], 500);
-        }
+        return $this->executeAction(
+            fn() => Customer::all(),
+            'Failed to fetch customers'
+        );
     }
 
     public function update(UpdateCustomerRequest $request, Customer $customer)
     {
-        try {
-            $validated = $request->validated();
-            $customer->update($validated);
-            
-            return response()->json([
-                'status' => 'success',
-                'data' => $customer
-            ], 200);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to update customer: ' . $th->getMessage()
-            ], 500);
-        }
+        return $this->executeAction(
+            function() use ($request, $customer) {
+                $customer->update($request->validated());
+                return $customer;
+            },
+            'Failed to update customer'
+        );
     }
 
     public function delete(Customer $customer)
     {
-        try {
-            $customer->delete();
-            
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Customer deleted successfully'
-            ], 200);
-        } catch (\Throwable $th) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Failed to delete customer: ' . $th->getMessage()
-            ], 500);
-        }
+        return $this->executeAction(
+            function() use ($customer) {
+                $customer->delete();
+                return ['message' => 'Customer deleted successfully'];
+            },
+            'Failed to delete customer'
+        );
     }
 }
