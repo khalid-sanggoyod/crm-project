@@ -24,7 +24,7 @@ class UpdateCustomerRequest extends FormRequest
         return [
             'first_name' => 'string|max:255',
             'last_name' => 'string|max:255',
-            'email' => 'email|unique:customers,email,' . $this->id,
+            'email' => 'email' . $this->id,
             'contact_number' => 'string|max:20',
         ];
     }

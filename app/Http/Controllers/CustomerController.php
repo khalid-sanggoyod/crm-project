@@ -20,7 +20,7 @@ class CustomerController extends Controller
         ], 201);
     }
 
-    public function get(Customer $customer)
+    public function index(Customer $customer)
     {
         $customer = Customer::all();
         return response()->json([
