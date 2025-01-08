@@ -19,7 +19,7 @@ php --version
 sudo apt-get install php8.1
 ```
 
-- install [composer](https://getcomposer.org/)
+- install [composer] -> https://getcomposer.org/
     
 For Windows or macOS, refer to the official PHP downloads page: https://www.php.net/downloads.php.
 
